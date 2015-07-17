@@ -1,4 +1,5 @@
 {
   "gunzip-maybe": "1.2.1",
-  "tar-stream": "1.2.1"
+  "tar-stream": "1.2.1",
+  "uglify-js": "2.4.23"
 }

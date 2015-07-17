@@ -5,8 +5,12 @@
 # but you can also edit it by hand.
 
 meteor-platform
-autopublish
-insecure
+#autopublish
+#insecure
 gadicohen:package-server
 meteorhacks:npm
 npm-container
+
+constraint-solver
+package-version-parser
+sha
