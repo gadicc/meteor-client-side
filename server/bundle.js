@@ -3,7 +3,7 @@ var removePackages = [ 'autoupdate', 'reload', 'reload-safetybelt' ];
 
 var Bundles = new Mongo.Collection('bundles');
 Bundles._ensureIndex({ sha: 1 });
-Bundles.remove({});
+//Bundles.remove({});
 
 var UglifyJS = Meteor.npmRequire("uglify-js");
 
@@ -122,16 +122,17 @@ WebApp.connectHandlers.use(function(req, res, next) {
   var bundle, requestSha;
 
   if (explicitVersions) {
+
     requestSha = SHA256(req.url);
     if (req.headers['if-none-match'] === requestSha) {
-      console.log(req.url + ' (serving from db - matched requestSha etag)');
+      console.log(req.url + ' (not sending - matched requestSha etag)');
       res.writeHead(304, 'Not Modified');
       res.end();
       return;
     }
 
     _.extend(headers, {
-      'cache-control': 'max-age=3600',
+      'cache-control': 'max-age=3155692',
       'Etag': requestSha
     });
 
@@ -144,30 +145,26 @@ WebApp.connectHandlers.use(function(req, res, next) {
       res.end(bundle.minified);
       return;
     }
+
+  } else {
+
+    // Cache non-version-explicit bundles for 1 hr only
+    headers['cache-control'] = 'max-age=3600';
+
   }
 
   var deps = genDeps(release, packages);
-
   var sha = genSha(deps);
-  var fields = {};
 
-  // legacy; we no longer store unminified bundle in db
-  if (serveMinified)
-    fields.minified = 1;
-  else
-    fields.unminified = 1;
-
-  bundle = serveMinified && Bundles.findOne({ sha: sha }, { fields: fields });
+  bundle = serveMinified && Bundles.findOne({ sha: sha }, { fields: { minified: 1 } });
   if (bundle) {
     // match from all package Sha but not requestSha, so let's add it
     Bundles.update(bundle.id, { $push: { requestShas: requestSha } });
 
     console.log(req.url + ' (serving from db)');
-    if (explicitVersions)
-      res.writeHead(200, 'OK', headers);
 
+    res.writeHead(200, 'OK', headers);
     res.end(bundle.minified);
-    // res.end(bundle[serveMinified ? bundle.minified : bundle.unminified]);
     return;
   }
 

@@ -17,15 +17,16 @@ Notes:
 * You get a global var, `packageVersions`, which shows you what you got.
 * You can specify explicit versions with `@=`
 * Unless every package is specified with `@=`, you aren't guaranteed
-  consistent versioning.  Browser will receive an etag for the sha.
-* For consistency, use the DDP method / REST API to get the sha for your
-  specific bundle (coming soon).  Browser will cache for 1 year.
+  consistent versioning, and browser will cache for 1 hr.
+* If you do explicitly specify all versions, browser will receive an
+  etag for the sha, and cache for 1 yr.
+* Even if you specify all versions, they may have their own deps.  For
+  guaranteed consistency, use the DDP method / REST API to get the sha
+  for your specific bundle (coming soon).  ETag of sha + 1 yr cache.
 * Use `bundle.js` instead of `bundle.min.js` to get the unminified version.
 
 ### TODO:
 
-* caching
-* minification
 * DDP, pub for releases, packages
 * method/rest for resolving
 * sha for completely resolved package list
