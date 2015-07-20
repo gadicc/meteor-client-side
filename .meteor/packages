@@ -7,9 +7,12 @@
 meteor-platform
 #autopublish
 #insecure
+
 gadicohen:package-server
 meteorhacks:npm
 npm-container
+
+reactive-var
 
 constraint-solver
 package-version-parser

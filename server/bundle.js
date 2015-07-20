@@ -3,7 +3,7 @@ var removePackages = [ 'autoupdate', 'reload', 'reload-safetybelt' ];
 
 var Bundles = new Mongo.Collection('bundles');
 Bundles._ensureIndex({ sha: 1 });
-//Bundles.remove({});
+// Bundles.remove({});
 
 var UglifyJS = Meteor.npmRequire("uglify-js");
 
@@ -94,9 +94,9 @@ function wrap(packageData, packages, removePackages) {
   return pre + packageData.unminified + post + '\n\n';
 }
 
-var re = /\/bundle(\.min)?.js\?release=([^\&]+)&deps=(.*)/;
+var bundleRe1 = /\/bundle(\.min)?.js\?release=([^\&]+)&deps=(.*)/;
 WebApp.connectHandlers.use(function(req, res, next) {
-  var match = re.exec(req.url);
+  var match = bundleRe1.exec(req.url);
   if (!match)
     return next();
 
@@ -170,6 +170,49 @@ WebApp.connectHandlers.use(function(req, res, next) {
 
   console.log(req.url + ' (generating bundle)');
 
+  var bundle = genBundle(release, packages, deps, sha, requestSha);
+
+  res.writeHead(200, 'OK', headers);
+  res.end(bundle[serveMinified ? 'minified' : 'unminified']);
+});
+
+var bundleRe2 = /\/bundle(\.min)?.js\?hash=([^\&]+)/;
+WebApp.connectHandlers.use(function(req, res, next) {
+  var match = bundleRe2.exec(req.url);
+  if (!match)
+    return next();
+
+  console.log(req.url + ' (request)');
+
+  var serveMinified = !!match[1];
+  var hash = match[2];
+
+  var bundle = Bundles.findOne({ shortSha: hash });
+
+  if (!bundle) {
+    res.writeHead(404, 'Not Found');
+    res.end();
+    return;
+  }
+
+  res.writeHead(200, 'OK', {
+    'content-type': 'application/javascript',
+      'cache-control': 'max-age=3155692'
+  });
+
+  if (serveMinified) {
+
+    res.end(bundle.minified);
+
+  } else {
+
+    res.end("// TODO :)\n");
+
+  }
+
+});
+
+function genBundle(release, packages, deps, sha, requestSha) {
   deps = retrievePackageDataFor(deps);
 
   var out = 'if (typeof __meteor_runtime_config__ === "undefined")\n  __meteor_runtime_config__ = {};\n' +
@@ -213,14 +256,45 @@ WebApp.connectHandlers.use(function(req, res, next) {
   compressed_ast.print(stream);
   var minified = stream.toString('utf8');
 
-  Bundles.insert({
+  var bundle = {
     sha: sha,
+    shortSha: sha.substr(0, 7),
     // unminified: out,
     minified: minified,
-    requestShas: [ requestSha ]
+    requestShas: [ ]
     // store versions aswell?
-  });
+  };
 
-  res.writeHead(200, 'OK', headers);
-  res.end(serveMinified ? minified : out);
+  if (requestSha)
+    bundle.requestShas.push(requestSha);
+
+  var id = Bundles.insert(bundle);
+  bundle._id = id;
+  bundle.unminified = out;
+
+  return bundle;
+}
+
+Meteor.methods({
+  genBundle: function(release, packages) {
+    var deps = genDeps(release, packages);
+    var sha = genSha(deps);
+
+    var versions = [];
+    _.each(deps, function(dep) {
+      versions.push(dep.packageName + '@' + dep.version)
+    });
+    versions = versions.sort().join('\n');
+
+    var bundle = Bundles.findOne({ sha: sha }, { fields: { minified: 1, shortSha: 1 } });
+    if (!bundle) {
+      console.log('Generating new bundle for ' + sha);
+      bundle = genBundle(release, packages, deps, sha);
+    }
+
+    return {
+      hash: bundle.shortSha,
+      versions: versions
+    }
+  }
 });

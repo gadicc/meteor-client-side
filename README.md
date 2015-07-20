@@ -1,18 +1,10 @@
 ## client-side.meteor.com
 
-Working, just use like this:
+Apology: the code is quite messy, because I wanted this working as quickly as possible for very specific
+use cases, and don't really expect anyone else to use it.  But if you'd like to look at nicer code,
+open an issue on the repo and I'll clean it up :)
 
-```html
-<html>
-
-  <head>
-    <script src="/bundle.js?release=METEOR@1.1.0.2&deps=meteor-platform,gadicohen:famous-views"></script>
-  </head>
-
-</html>
-```
-
-Notes:
+### Notes
 
 * You get a global var, `packageVersions`, which shows you what you got.
 * You can specify explicit versions with `@=`

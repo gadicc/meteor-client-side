@@ -1,0 +1,45 @@
+<head>
+  <title>client-side.meteor.com</title>
+</head>
+
+<body>
+  <h1>client-side.meteor.com</h1>
+
+  <p>Please see the <a href="https://github.com/gadicc/meteor-client-side">README</a>.</p>
+
+  <p>Note: the first time a particular bundle is requested, the initial response will be slow
+  until we have retrieved and processed all packages.</p>
+
+  <h2>Option 1 - From a script tag (easiest)</h2>
+
+  <p>Easiest, but you aren't guaranteed the same bundle each time unless you specify @= for
+  all packages (including meteor-platform).  If you do, browser will cache for 1 yr, otherwise 1 hr.</p>
+
+  <div class="scriptTag">&lt;script type='text/javascript' src='/bundle.min.js?release=METEOR@1.1.0.2&deps=meteor-platform,gadicohen:famous-views@1.2.0,etc'>&lt;/script></div>
+
+  {{> generateBundle}}
+</body>
+
+<template name="generateBundle">
+  <h2>Option 2 - Generate a Bundle (recommended)</h2>
+
+  <p>Specify your packages here first and we'll give you a unique id for your bundle which
+  is guaranteed to be the same on every request.  Browsers will cache for 1 yr.</p>
+
+  <p>
+    <textarea cols="60" rows="5">METEOR@1.1.0.2
+meteor-platform</textarea>
+  </p>
+
+  <p>
+    <button>Generate</button>
+  </p>
+
+  {{#if hash}}
+    <p>The following script tag:</p>
+    <div class="scriptTag">&lt;script type='text/javascript' src='/bundle.min.js?hash={{hash}}'>&lt;/script></div>
+    <p>is guaranteed to always retrieve a client-side bundle with exactly the following packages:</p>
+    <div id="versions">{{versions}}</div>
+    <p>Browsers will cache the result for 1 year.</p>
+  {{/if}}
+</template>

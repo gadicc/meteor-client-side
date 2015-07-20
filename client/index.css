@@ -1,0 +1,15 @@
+.scriptTag {
+  white-space: pre;
+  border: 1px solid #a55;
+  background: #fcc;
+  padding: 10px;
+  margin: 5px 0 5px 0;
+}
+
+#versions {
+  white-space: pre;
+  border: 1px solid #55a;
+  background: #aaf;
+  padding: 10px;
+  margin: 5px 0 5px 0;
+}
