@@ -94,7 +94,7 @@ function wrap(packageData, packages, removePackages) {
   return pre + packageData.unminified + post + '\n\n';
 }
 
-var bundleRe1 = /\/bundle(\.min)?.js\?release=([^\&]+)&deps=(.*)/;
+var bundleRe1 = /\/bundle(\.min)?.js\?release=([^\&]+)&packages=(.*)/;
 WebApp.connectHandlers.use(function(req, res, next) {
   var match = bundleRe1.exec(req.url);
   if (!match)
@@ -104,7 +104,7 @@ WebApp.connectHandlers.use(function(req, res, next) {
 
   var serveMinified = !!match[1];
   var release = match[2];
-  var packages = match[3].split(',');
+  var packages = match[3].split('+');
 
   // every request package was given an explicity (@=) version
   var explicitVersions = true;

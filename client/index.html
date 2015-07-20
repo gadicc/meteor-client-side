@@ -10,12 +10,12 @@
   <p>Note: the first time a particular bundle is requested, the initial response will be slow
   until we have retrieved and processed all packages.</p>
 
-  <h2>Option 1 - From a script tag (easiest)</h2>
+  <h2>Option 1 - Direct from a script tag (easiest)</h2>
 
   <p>Easiest, but you aren't guaranteed the same bundle each time unless you specify @= for
   all packages (including meteor-platform).  If you do, browser will cache for 1 yr, otherwise 1 hr.</p>
 
-  <div class="scriptTag">&lt;script type='text/javascript' src='/bundle.min.js?release=METEOR@1.1.0.2&deps=meteor-platform,gadicohen:famous-views@1.2.0,etc'>&lt;/script></div>
+  <div class="scriptTag">&lt;script type='text/javascript' src='/bundle.min.js?release=METEOR@1.1.0.2&packages=meteor-platform+gadicohen:famous-views@1.2.0'>&lt;/script></div>
 
   {{> generateBundle}}
 </body>
