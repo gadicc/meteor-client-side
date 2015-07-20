@@ -124,37 +124,34 @@ WebApp.connectHandlers.use(function(req, res, next) {
   if (explicitVersions) {
 
     requestSha = SHA256(req.url);
-    if (req.headers['if-none-match'] === requestSha) {
-      console.log(req.url + ' (not sending - matched requestSha etag)');
-      res.writeHead(304, 'Not Modified');
-      res.end();
-      return;
-    }
-
-    _.extend(headers, {
-      'cache-control': 'max-age=3155692',
-      'Etag': requestSha
-    });
 
     bundle = serveMinified &&
-      Bundles.findOne({ requestShas: requestSha }, { fields: { minified: 1 } });
+      Bundles.findOne({ requestShas: requestSha }, { fields: { minified: 1, sha: 1 } });
 
     if (bundle) {
       console.log(req.url + ' (serving from db - requestSha)');
+      headers.etag = bundle.sha;
+      headers['cache-control'] = 'max-age=3155692';
       res.writeHead(200, 'OK', headers);
       res.end(bundle.minified);
       return;
     }
 
-  } else {
-
-    // Cache non-version-explicit bundles for 1 hr only
-    headers['cache-control'] = 'max-age=3600';
-
   }
 
   var deps = genDeps(release, packages);
   var sha = genSha(deps);
+
+  if (req.headers['if-none-match'] === sha) {
+    console.log(req.url + ' (not sending - matched sha etag)');
+    res.writeHead(304, 'Not Modified');
+    res.end();
+    return;
+  }
+
+  headers.etag = sha;
+  headers['cache-control'] = 'max-age=' +
+    (explicitVersions ? '3155692' : '3600');
 
   bundle = serveMinified && Bundles.findOne({ sha: sha }, { fields: { minified: 1 } });
   if (bundle) {
