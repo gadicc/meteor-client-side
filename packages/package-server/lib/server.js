@@ -15,7 +15,13 @@ pserver.reset = function() {
 
 //pserver.reset();
 
+var updateInProgress = false;
+
 function doUpdate() {
+  if (updateInProgress)
+    return;
+  updateInProgress = true;
+
   var syncToken = pserver.meta.findOne('syncToken') || { format: "1.1" };
   if (syncToken._id) delete syncToken._id;
   console.log('Fetching...');
@@ -56,7 +62,9 @@ function doUpdate() {
 
       }
 
+    res.syncToken._id = 'syncToken';  // https://github.com/meteor/meteor/issues/4781
     pserver.meta.upsert('syncToken', res.syncToken);
+    updateInProgress = false;
 
     if (res.upToDate)
       console.log('Packages up to date');
