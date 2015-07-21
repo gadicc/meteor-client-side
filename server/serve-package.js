@@ -6,9 +6,9 @@ var Fiber = Npm.require('fibers');
 var packages = new Mongo.Collection('packages');
 //packages.remove({});
 
-// Note: we call update() on a notFound too
+// Note: we call update() on a notFound too (TODO; not anymore; work this in again)
 var updatePackages = _.throttle(packageServer.update, 10000);
-//Meteor.setInterval(updatePackages, 60000);
+Meteor.setInterval(updatePackages, 60000);
 
 function resEnd(res, buffer) {
   res.writeHead(200, 'OK', {

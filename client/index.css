@@ -1,5 +1,5 @@
 .scriptTag {
-  white-space: pre;
+  white-space: pre-wrap;
   border: 1px solid #a55;
   background: #fcc;
   padding: 10px;

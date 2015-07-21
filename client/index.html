@@ -8,17 +8,25 @@
   <p>Please see the <a href="https://github.com/gadicc/meteor-client-side">README</a>.</p>
 
   <p>Note: the first time a particular bundle is requested, the initial response will be slow
-  until we have retrieved and processed all packages.</p>
+  until we have retrieved and processed all packages.  Also, for anything more than occassional
+  use, please consider setting up your own reverse-proxy in front of this site.</p>
 
+  {{> directScript }}
+  {{> generateBundle}}
+  {{> alternatives }}
+
+
+</body>
+
+<template name="directScript">
   <h2>Option 1 - Direct from a script tag (easiest)</h2>
 
   <p>Easiest, but you aren't guaranteed the same bundle each time unless you specify @= for
-  all packages (including meteor-platform).  If you do, browser will cache for 1 yr, otherwise 1 hr.</p>
+  all packages (including meteor-platform).  If you do, browser will cache for 1 yr, otherwise 1 hr,
+  afterwhich, an etag is used to avoid re-sending the bundle if it has not changed.</p>
 
-  <div class="scriptTag">&lt;script type='text/javascript' src='/bundle.min.js?release=METEOR@1.1.0.2&packages=meteor-platform+gadicohen:famous-views@1.2.0'>&lt;/script></div>
-
-  {{> generateBundle}}
-</body>
+  <div class="scriptTag">&lt;script type="text/javascript" src="http://client-side.meteor.com/bundle.min.js?release=METEOR@1.1.0.2&packages=meteor-platform+gadicohen:famous-views@1.2.0">&lt;/script></div>
+</template>
 
 <template name="generateBundle">
   <h2>Option 2 - Generate a Bundle (recommended)</h2>
@@ -37,9 +45,23 @@ meteor-platform</textarea>
 
   {{#if hash}}
     <p>The following script tag:</p>
-    <div class="scriptTag">&lt;script type='text/javascript' src='/bundle.min.js?hash={{hash}}'>&lt;/script></div>
+    <div class="scriptTag">&lt;script type="text/javascript" src="http://client-side.meteor.com/bundle.min.js?hash={{hash}}">&lt;/script></div>
     <p>is guaranteed to always retrieve a client-side bundle with exactly the following packages:</p>
     <div id="versions">{{versions}}</div>
     <p>Browsers will cache the result for 1 year.</p>
   {{/if}}
+</template>
+
+<template name="alternatives">
+  <h2>Alternatives</h2>
+
+  <ul>
+    <li>
+      <a href="https://github.com/frozeman/meteor-build-client">https://github.com/frozeman/meteor-build-client</a> - a tool to build the client part of a meteor app
+    </li><li>
+      <a href="https://github.com/eface2face/meteor-client">https://github.com/eface2face/meteor-client</a> - core Meteor libraries as npm/browserify packages
+    </li><li>
+      <a href="https://github.com/mondora/asteroid">https://github.com/mondora/asteroid</a> - custom front-end connector to Meteor backend.
+    </li>
+  </ul>
 </template>
