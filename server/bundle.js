@@ -1,7 +1,7 @@
 var supportedFormats = ['unipackage-unibuild-pre1'];
 var removePackages = [ 'autoupdate', 'reload', 'reload-safetybelt' ];
 
-var Bundles = new Mongo.Collection('bundles');
+Bundles = new Mongo.Collection('bundles');
 Bundles._ensureIndex({ sha: 1 });
 // Bundles.remove({});
 
@@ -109,10 +109,6 @@ WebApp.connectHandlers.use(function(req, res, next) {
   // every request package was given an explicity (@=) version
   var explicitVersions = true;
 
-  var headers = {
-    'content-type': 'application/javascript'
-  };
-
   for (var i=0; i < packages.length; i++)
     if (!packages[i].match(/@=/)) {
       explicitVersions = false;
@@ -120,6 +116,10 @@ WebApp.connectHandlers.use(function(req, res, next) {
     }
 
   var bundle, requestSha;
+
+  var headers = {
+    'content-type': 'application/javascript'
+  };
 
   if (explicitVersions) {
 
@@ -214,7 +214,7 @@ function genBundle(release, packages, deps, sha, requestSha) {
 
   var out = 'if (typeof __meteor_runtime_config__ === "undefined")\n  __meteor_runtime_config__ = {};\n' +
     '__meteor_runtime_config__.meteorRelease = "' + release + '";\n' +
-    'if (!__meteor_runtime_config__.ROOT_URL)\n  __meteor_runtime_config__.ROOT_URL = window.location\n' +
+    'if (!__meteor_runtime_config__.ROOT_URL)\n  __meteor_runtime_config__.ROOT_URL = window.location.href;\n' +
     'if (!__meteor_runtime_config__.ROOT_URL_PATH_PREFIX)\n  __meteor_runtime_config__.ROOT_URL_PATH_PREFIX = "";\n\n';
 
   var depsToSend = _.reject(deps, function(p) {

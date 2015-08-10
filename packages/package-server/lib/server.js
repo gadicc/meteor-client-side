@@ -1,7 +1,7 @@
 pserver.meta = new Mongo.Collection('pserver_meta');
 
 pserver.conn = DDP.connect("http://packages.meteor.com/");
-pserver.conn.onReconnect = doUpdate;
+//pserver.conn.onReconnect = doUpdate;
 
 var DEBUG = false;
 

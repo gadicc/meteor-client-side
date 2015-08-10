@@ -1,0 +1,23 @@
+.process {
+  border: 1px solid black;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding: 5px;
+  font-family: monospace;
+  background: #dfdfdf;
+}
+
+.process:last-child {
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.processLog {
+  font-family: monospace;
+  white-space: pre;
+  height: 10em;
+  overflow: auto;
+  background: black;
+  color: #999;
+  padding: 10px;
+}

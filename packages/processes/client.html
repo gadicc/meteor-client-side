@@ -1,0 +1,22 @@
+<template name="processLog">
+  <div>
+    {{#if id}}
+
+      {{#with process}}
+        <div class="process">
+          Status: <b>{{state}}</b>,
+          Start: {{ctime}}
+        </div>
+      {{/with}}
+
+      <div class="processLog">{{#each chunks}}{{{chunk}}}{{/each}}</div>
+
+    {{else}}
+
+      <div class="process">
+        Error: no log id specified.  Usage: {{|>processLog id=logId}}
+      </div>
+
+    {{/if}}
+  </div>
+</template>

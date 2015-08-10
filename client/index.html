@@ -3,6 +3,9 @@
 </head>
 
 <body>
+  {{logId}}
+  {{>processLog id=logId}}
+
   <h1>client-side.meteor.com</h1>
 
   <p>Please see the <a href="https://github.com/gadicc/meteor-client-side">README</a>.</p>
@@ -42,6 +45,10 @@ meteor-platform</textarea>
   <p>
     <button>Generate</button>
   </p>
+
+  {{#if logId}}
+    {{>processLog id=logId}}
+  {{/if}}
 
   {{#if hash}}
     <p>The following script tag:</p>

@@ -8,7 +8,8 @@ meteor-platform
 #autopublish
 #insecure
 
-gadicohen:package-server
+#gadicohen:package-server
+gadicohen:processes
 meteorhacks:npm
 npm-container
 

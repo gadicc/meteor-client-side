@@ -1,3 +1,5 @@
+return;
+
 var gunzip = Meteor.npmRequire('gunzip-maybe');
 var tar = Meteor.npmRequire('tar-stream');
 var https = Npm.require('https');
